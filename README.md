@@ -9,11 +9,21 @@
 - [ ] - SDK(s)?
 - [ ] - Benchmarks
 
-#### Performance
 
-All functions ultimately map to Redis ordered set commands that are O(log(N)) complexity or better.
 
 #### Notes
 
 ##### Job Data
 Accept JSON data along with Jobs, save in separate key (so that it can be sharded across cluster).
+
+##### Performance
+All functions ultimately map to Redis ordered set commands that are O(log(N)) complexity or better.
+
+##### JSON Data
+Each job's data is stored separately as a hash with the following fields, with the key being the Job ID (with the prefix "sq:job:"):
+
+* queued_at (timestamp)
+* status (string)
+* retries (int)
+* next_retry_at (timestamp)
+* payload (blob)
