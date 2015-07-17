@@ -43,7 +43,7 @@ class SQBench < SQCLI
     }
     runTime = (Time.now - tStart)
     opsPerSec = (jobs.to_i/runTime).to_i
-    puts "Took #{runTime.to_s} seconds (#{opsPerSec}/s)." 
+    puts "Took #{runTime.to_s} seconds (#{opsPerSec} ops/s)." 
   end
   
   desc "r JOB_COUNT", "run read benchmark"
@@ -51,16 +51,16 @@ class SQBench < SQCLI
     puts "Initializing Benchmark"
     sha = load()
     puts "Running..."
-    tStart = Time.now
     jobs.to_i.times { |i|
       add(i, generate_payload())
     }
+    tStart = Time.now
     jobs.to_i.times {
       pop()
     }
     runTime = (Time.now - tStart)
     opsPerSec = (jobs.to_i/runTime).to_i
-    puts "Took #{runTime.to_s} seconds (#{opsPerSec}/s)." 
+    puts "Took #{runTime.to_s} seconds (#{opsPerSec} ops/s)." 
   end
 
   desc "rw JOB_COUNT", "run read/write benchmark"
@@ -74,7 +74,7 @@ class SQBench < SQCLI
     }
     runTime = (Time.now - tStart)
     opsPerSec = (jobs.to_i/runTime).to_i
-    puts "Took #{runTime.to_s} seconds (#{opsPerSec}/s)." 
+    puts "Took #{runTime.to_s} seconds (#{opsPerSec} ops/s)." 
   end 
 end
 
