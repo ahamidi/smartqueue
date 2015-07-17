@@ -14,6 +14,11 @@ SmartQueue is (expected to be) used via an SDK
 
 - [Go](http://github.com/ahamidi/go-sq)
 
+To test via included SQCLI:
+```
+./sqcli.rb
+```
+
 #### Notes
 
 ##### Job Data
