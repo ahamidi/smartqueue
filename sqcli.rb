@@ -19,13 +19,21 @@ def shaScript(file)
   return Digest::SHA1.hexdigest file
 end
 
+def output(out)
+  if __FILE__ == $0 # CLI is being called directly
+    puts out
+  else
+    return out # Imported via something else
+  end
+end
+
 class SQCLI < Thor
   
   desc "load HOST PORT", "load SmartQueue script"
   def load(host="localhost", port=6379)
     redis = Redis.new(host: host, port: port, db:2)
     sha = redis.script(:load, readScript())
-    puts sha
+    output(sha)
   end
 
   desc "add ID PAYLOAD", "add Job"
@@ -33,7 +41,7 @@ class SQCLI < Thor
     redis = Redis.new(host: host, port: port, db:2)
     sha = shaScript(readScript())
     result = redis.evalsha(sha, nil, ["add", id, Time.new.to_i, payload])
-    puts result
+    output(result)
   end
 
   desc "count", "count jobs in queue"
@@ -41,7 +49,7 @@ class SQCLI < Thor
     redis = Redis.new(host: host, port: port, db:2)
     sha = shaScript(readScript())    
     result = redis.evalsha(sha, nil, ["count"])
-    puts result
+    output(result)
   end
 
   desc "remove ID", "remove job with ID from queue"
@@ -49,7 +57,7 @@ class SQCLI < Thor
     redis = Redis.new(host: host, port: port, db:2)
     sha = shaScript(readScript())    
     result = redis.evalsha(sha, nil, ["remove", id])
-    puts result
+    output(result)
   end
 
   desc "pop", "get next available job"
@@ -57,9 +65,11 @@ class SQCLI < Thor
     redis = Redis.new(host: host, port: port, db:2)
     sha = shaScript(readScript())   
     result = redis.evalsha(sha, nil, ["pop"])
-    puts result
+    output(result)
   end
 
 end
 
-SQCLI.start(ARGV)
+if __FILE__ == $0 # Only run if being called directly
+  SQCLI.start(ARGV)
+end
