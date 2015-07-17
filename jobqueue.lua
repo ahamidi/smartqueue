@@ -30,6 +30,7 @@ end
 local function removeJobIDandJob(id)
     redis.call('ZREMRANGEBYRANK', 'sq:jobs', 0, 0)
     redis.call('DEL', 'sq:job:'..id)
+    return "OK"
 end
 
 ----
@@ -46,7 +47,7 @@ end
 
 -- Delete
 local function removeJob(id)
-    return redis.call('ZREM', 'sq:jobs', id)
+    return removeJobIDandJob(id)
 end
 
 -- Peek
