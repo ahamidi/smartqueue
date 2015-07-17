@@ -1,13 +1,13 @@
 ### SmartQueue - Ordered Set Job Queue
 
 #### TODO
-- [x] - Support JSON job data
-- [ ] - Store rolling stats on jobs
-- [ ] - Support keys on all commands (cluster)
-- [ ] - Docs
-- [ ] - Tests
-- [ ] - SDK(s)?
-- [ ] - Benchmarks
+- [x] Support JSON job data
+- [ ] Store rolling stats on jobs
+- [ ] Support keys on all commands (cluster)
+- [ ] Docs
+- [ ] Tests
+- [ ] SDK(s)?
+- [ ] Benchmarks
 
 
 
