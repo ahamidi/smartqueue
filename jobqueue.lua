@@ -11,14 +11,30 @@ local jobsKey = KEYS[1]
 local jobsCounter = KEYS[2]
 
 ----
+-- Helper Functions
+----
+
+-- Saves the job's payload to Redis (also handles encoding)
+local function saveJobWithPayload(id, timestamp, payload)
+   redis.call('ZADD', 'sq:jobs', redis.call('INCR', 'sq:jobcount'), id)
+   return redis.call('HMSET', 'sq:job:'..id, "queued_at", timestamp, "status", "new", "retries", 0, "next_retry_at", 0, "payload", payload)
+end
+
+-- Retrieves the job's payload (handles decoding)
+local function getJobWithPayload(id)
+    local jobData = redis.call('HGETALL', 'sq:job:'..id)
+    return jobData
+end
+
+----
 -- Functions
 ----
 
 -- Add
-local function addJob(id)
+local function addJob(id, timestamp, payload)
     local exists = redis.call('ZSCORE', 'sq:jobs', id)
     if not exists then
-        return redis.call('ZADD', 'sq:jobs', redis.call('INCR', 'sq:jobcount'), id)
+        return saveJobWithPayload(id, timestamp, payload)
     end
 end
 
@@ -34,9 +50,14 @@ end
 
 -- Pop
 local function pop()
-    local job = redis.call('ZRANGE', 'sq:jobs', 0, 0)
-    redis.call('ZREMRANGEBYRANK', 'sq:jobs', 0, 0)
-    return job
+    local jobID = redis.call('ZRANGE', 'sq:jobs', 0, 0)
+    if jobID[1] ~= nil then
+        redis.call('ZREMRANGEBYRANK', 'sq:jobs', 0, 0)
+        local job = getJobWithPayload(jobID[1])
+        return cjson.encode(job)
+    else
+        return nil
+    end
 end
 
 -- Count
@@ -47,7 +68,7 @@ end
 
 -- Main
 if command == "add" then
-    return addJob(ARGV[2])
+    return addJob(ARGV[2], ARGV[3], ARGV[4])
 elseif command == "remove" then
     return removeJob(ARGV[2])
 elseif command == "pop" then

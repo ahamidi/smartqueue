@@ -2,6 +2,7 @@
 
 require "thor"
 require "redis"
+require "time"
 require "digest/sha1"
 
 def readScript
@@ -27,11 +28,11 @@ class SQCLI < Thor
     puts sha
   end
 
-  desc "add ID", "add Job with ID"
-  def add(id, host="localhost", port=6379)
+  desc "add ID PAYLOAD", "add Job"
+  def add(id, payload, host="localhost", port=6379)
     redis = Redis.new(host: host, port: port, db:2)
     sha = shaScript(readScript())
-    result = redis.evalsha(sha, nil, ["add", id])
+    result = redis.evalsha(sha, nil, ["add", id, Time.new.to_i, payload])
     puts result
   end
 
@@ -48,6 +49,14 @@ class SQCLI < Thor
     redis = Redis.new(host: host, port: port, db:2)
     sha = shaScript(readScript())    
     result = redis.evalsha(sha, nil, ["remove", id])
+    puts result
+  end
+
+  desc "pop", "get next available job"
+  def pop(host="localhost", port=6379)
+    redis = Redis.new(host: host, port: port, db:2)
+    sha = shaScript(readScript())   
+    result = redis.evalsha(sha, nil, ["pop"])
     puts result
   end
 
