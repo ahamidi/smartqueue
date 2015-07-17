@@ -9,7 +9,10 @@
 - [ ] SDK(s)?
 - [ ] Benchmarks
 
+#### Usage
+SmartQueue is (expected to be) used via an SDK
 
+- [Go](http://github.com/ahamidi/go-sq)
 
 #### Notes
 

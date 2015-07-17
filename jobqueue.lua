@@ -26,6 +26,12 @@ local function getJobWithPayload(id)
     return jobData
 end
 
+-- Delete job ID and associated job
+local function removeJobIDandJob(id)
+    redis.call('ZREMRANGEBYRANK', 'sq:jobs', 0, 0)
+    redis.call('DEL', 'sq:job:'..id)
+end
+
 ----
 -- Functions
 ----
@@ -52,11 +58,11 @@ end
 local function pop()
     local jobID = redis.call('ZRANGE', 'sq:jobs', 0, 0)
     if jobID[1] ~= nil then
-        redis.call('ZREMRANGEBYRANK', 'sq:jobs', 0, 0)
         local job = getJobWithPayload(jobID[1])
+        removeJobIDandJob(jobID[1])
         return cjson.encode(job)
     else
-        return nil
+        return "OK"
     end
 end
 
