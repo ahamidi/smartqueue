@@ -7,7 +7,7 @@
 - [ ] Docs
 - [ ] Tests
 - [ ] SDK(s)?
-- [ ] Benchmarks
+- [x] Benchmarks (SEE benchmark.rb)
 
 #### Usage
 SmartQueue is (expected to be) used via an SDK
